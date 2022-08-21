@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>guess the word</title>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Poppins;
+      }
+      body {
+        background-image: linear-gradient(to right, #007991, #7ceac9);
+      }
+      .main {
+        display: flex;
+        justify-content: space-around;
+        margin: 8rem auto;
+        align-items: center;
+      }
+      .left {
+        border-left: 0.9rem solid white;
+        width: 30%;
+        font-size: 4.4rem;
+        padding-left: 1%;
+        color: white;
+        height: 19rem;
+      }
+      .right {
+        background-color: white;
+        width: 28rem;
+        height: 27rem;
+        border-radius: 2.5%;
+        position: flex;
+        flex-direction: column;
+        justify-content: space-around;
+      }
+      .top {
+        font-size: 150%;
+        font-weight: 600;
+        padding: 1.2rem;
+        padding-left: 1.5rem;
+        border-bottom: 0.09rem solid gray;
+      }
+      .boxs {
+        display: flex;
+        justify-content: center;
+        height: 110.4px;
+      }
+      .box {
+        border: 0.02rem solid rgb(164, 162, 162);
+        border-radius: 10%;
+        height: 3.2rem;
+        width: 3.2rem;
+        padding: 2.9% 0%;
+        text-align: center;
+        margin: 2rem 0.4rem 1.7rem;
+        color: white;
+      }
+      .text {
+        padding: 0 1.8rem 1.2rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+      .button-box {
+        margin: 1.2rem 1.8rem 0;
+      }
+      .button {
+        color: white;
+        font-size: 1.1rem;
+        border-radius: 0.4rem;
+        padding: 1rem 1.2rem;
+        width: 100%;
+        cursor: pointer;
+        background-color: #269cb3e7;
+        border: none;
+        outline: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="main">
+      <div class="left">
+        <div>
+          <pre>
+Guess a
+Word Game
+JavaScript
+          </pre>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="top">Guess the Word</div>
+
+        <div class="boxs"></div>
+        <div class="texts">
+          <div class="text">Hint :</div>
+          <div class="text">Remaining guesses : 8</div>
+          <div class="text">Wrong letters :</div>
+        </div>
+
+        <div class="button-box">
+          <button class="button">Reset game</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      //object
+      let words = {
+        chess: "game played by two player",
+        img: "a file format for image",
+        python: "programming language",
+        piano: "muzic instrument",
+        pizza: "popular fastfood",
+      };
+
+      //get element
+      let resetbutton = document.querySelector(".button");
+      let allLetterBoxs = document.querySelector(".boxs");
+      let hintMassage = document.querySelectorAll(".text")[0];
+      let remainingMassage = document.querySelectorAll(".text")[1];
+      let wrongLetters = document.querySelectorAll(".text")[2];
+
+      let keyPressHandler;
+
+      resetbutton.addEventListener("click", function () {
+        //random word
+        let remainingChance = 8;
+        let correctlettersCount = 0;
+        let wordToGuess = Object.keys(words);
+        let HintOfWord = Object.values(words);
+        let randomIndex = Math.floor(Math.random() * wordToGuess.length);
+        let randomWord = wordToGuess[randomIndex];
+
+        //delete last word
+        let lastChild = allLetterBoxs.lastElementChild;
+        hintMassage.innerHTML = "Hint : ";
+        remainingMassage.innerHTML = "Remaining guesses : " + 8;
+        wrongLetters.innerHTML = "Wrong letters : ";
+        while (lastChild) {
+          allLetterBoxs.removeChild(lastChild);
+          lastChild = allLetterBoxs.lastElementChild;
+        }
+        hintMassage.innerHTML += HintOfWord[randomIndex];
+        //put letters in boxs
+        for (let i = 0; i < randomWord.length; i++) {
+          let randomWordsLetter = document.createElement("div");
+          randomWordsLetter.className = "box";
+          randomWordsLetter.appendChild(
+            document.createTextNode(randomWord.charAt(i))
+          );
+          allLetterBoxs.appendChild(randomWordsLetter);
+        }
+
+        //remove lastwords eventlistener
+        document.removeEventListener("keypress", keyPressHandler);
+
+        keyPressHandler = function (e) {
+          let incorrectLetter = true;
+          let Lettersbox = document.querySelectorAll(".box");
+
+          for (let i = 0; i < Lettersbox.length; i++) {
+            if (Lettersbox[i].textContent == e.key) {
+              Lettersbox[i].style.color = "black";
+              incorrectLetter = false;
+              if (++correctlettersCount == Lettersbox.length) {
+                alert("you won!");
+              }
+            }
+          }
+          if (incorrectLetter) {
+            remainingMassage.innerHTML =
+              "Remaining guesses : " + --remainingChance; 
+            wrongLetters.innerHTML += e.key + " ,";
+            if (remainingChance == 0) {
+              
+              alert("gameover!");
+            }
+          }
+        };
+        // enter new letter
+        document.addEventListener("keypress", keyPressHandler);
+      });
+    </script>
+  </body>
+</html>
